@@ -5,7 +5,8 @@ This certbot plugin authenticates the certbots certificate sign request by deplo
 see certbot rquirements: https://certbot.eff.org/docs/install.html#system-requirements
 
 # Install
-pip install git+git@github.com:open-networks/certbot-bluecat.git
+`pip install git+git@github.com:open-networks/certbot-bluecat.git`
+by installing the plugin you will also install all missing dependencies including certbot.
 
 # Usage
 TODO: certbot -a certbot-bluecat....
