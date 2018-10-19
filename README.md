@@ -6,6 +6,7 @@ see certbot rquirements: https://certbot.eff.org/docs/install.html#system-requir
 
 # Install
 `pip install git+git@github.com:open-networks/certbot-bluecat.git`
+
 by installing the plugin you will also install all missing dependencies including certbot.
 
 # Usage
