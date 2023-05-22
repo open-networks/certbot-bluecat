@@ -50,7 +50,7 @@ class BluecatAuthenticator(dns_common.DNSAuthenticator):
         # viewid exists?
 
         # Initialize Bluecat Object
-        self.bluecat = Bluecat(self.conf('api'), self.conf('username'), self.conf('password'), self.conf('viewid'))
+        self.bluecat = Bluecat(self.conf('api'), self.conf('username'), self.conf('password'), self.conf('viewid'), self.conf('verify-ssl'))
 
         # Get RestAPI Session Token from Bluecat
         self.bluecat.get_token()

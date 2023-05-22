@@ -13,11 +13,12 @@ logger.info(f'logger initialized: {__name__}')
 class Bluecat(object):
     ''' Object representing a Bluecat API '''
 
-    def __init__(self, api, username, password, viewId):
+    def __init__(self, api, username, password, viewId, verify_ssl):
         self.api = api
         self.username = username
         self.password = password
         self.viewId = viewId
+        self.verify_ssl = verify_ssl
         # vars which will be defined while processing
         self.token = None
         self.record_name = None
@@ -30,7 +31,7 @@ class Bluecat(object):
         '''login and fetch a token'''
 
         url = f'{self.api}login?username={self.username}&password={self.password}'
-        res = requests.get(url)
+        res = requests.get(url, verify=self.verify_ssl)
         self.token = re.search('(BAMAuthToken: \S*)', res.text).group(0)
         return res.status_code
 
@@ -46,7 +47,7 @@ class Bluecat(object):
         zone = ''
         for d in reversed(domain_list):
             url = (f'{self.api}getEntityByName?parentId={parentId}&name={d}&type=Zone')
-            res = requests.get(url, headers={'Authorization': self.token})
+            res = requests.get(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
             assert res.status_code < 300
             output = res.json()
 
@@ -78,7 +79,7 @@ class Bluecat(object):
             "properties": f"ttl=60|absoluteName={validation_domain_name}|txt={validation}|"
         }
 
-        res = requests.post(url, headers=header, data=body, verify=False)
+        res = requests.post(url, headers=header, data=body, verify=self.verify_ssl)
 
         self.objectId = str(res.text)
         res.raise_for_status()
@@ -88,7 +89,7 @@ class Bluecat(object):
 
         logger.info('deploying dns record')
         url = f'{self.api}quickDeploy?entityId={self.zone_id}'
-        res = requests.post(url, headers={'Authorization': self.token})
+        res = requests.post(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         if res.status_code != 200:
             message = f'The quick deployment failed with code:{res.status_code}. The Response content was {res.content}'
             raise errors.PluginError(message)
@@ -98,14 +99,14 @@ class Bluecat(object):
         '''cleanup created txt record'''
 
         url = f'{self.api}delete?objectId={self.objectId}'
-        res = requests.delete(url, headers={'Authorization': self.token})
+        res = requests.delete(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         res.raise_for_status()
 
     def delete_txt_record_by_name(self):
         '''delete txt record if exists, to avoid duplicate entries'''
 
         url = f'{self.api}getEntityByName?parentId={self.zone_id}&name={self.record_name}&type=TXTRecord'
-        res = requests.get(url, headers={'Authorization': self.token})
+        res = requests.get(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         if res.json()['id'] > 0:
             self.objectId = str(res.json()['id'])
             self.delete_txt_record()
