@@ -37,7 +37,7 @@ class BluecatAuthenticator(dns_common.DNSAuthenticator):
             help='entityId of the DNS View from Bluecat API')
         # delay after deploying txt record. this differs from the dns default variable propagation-seconds
         # as its continously trying to check if the deployment has been executed and asap returns
-        add('propagation-timeout', default=300, type=int,
+        add('propagation-seconds', default=300, type=int,
             help='Time waiting for DNS to propagate before asking the ACME server')
         add('verify-ssl', default=False, type=bool,
             help="enable or disable SSL verification of the API")
@@ -78,31 +78,6 @@ class BluecatAuthenticator(dns_common.DNSAuthenticator):
         # quickdeploy
         logger.info('quickdeploy')
         code = self.bluecat.quickdeploy()
-
-        # verify propagation
-        timeout = self.conf('propagation-timeout')  # [seconds]
-        timeout_start = time.time()
-        found_flag = False
-
-        logger.debug(' Start TXT Dns request until validation TXT is deployed or timout is reached')
-        while time.time() < timeout_start + timeout and not found_flag:
-            logger.debug(f'time passed : {time.time()-timeout_start}s')
-            fqdn = f'_acme-challenge.{domain}.'
-
-            try:
-                answers = resolver.query(fqdn, 'TXT')
-                logger.debug(f'query qname: {answers.qname} num ans: {len(answers)}')
-                logger.debug(f'validation : {validation}')
-                for rdata in answers:
-                    for txt_string in rdata.strings:
-                        logger.debug(f'TXT        : {txt_string.decode()}')
-                        if txt_string.decode() == validation:
-                            logger.debug(f'Found correct TXT entry : {txt_string.decode()}')
-                            found_flag = True
-            except (resolver.NXDOMAIN, resolver.NoAnswer):
-                logger.debug(f'no TXT entry found at {fqdn}. retrying...')
-
-            time.sleep(5)
 
     # cleanup/delete txt record after validation
     def _cleanup(self, domain, validation_domain_name, validation):
