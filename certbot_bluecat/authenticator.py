@@ -3,8 +3,6 @@
 # extern libs
 import time
 from certbot.plugins import dns_common
-from certbot import interfaces
-import zope
 import logging
 from dns import resolver
 
@@ -17,8 +15,6 @@ logger = logging.getLogger(__name__)
 logger.info(('logger initialized: {0}').format(__name__))
 
 
-@zope.interface.implementer(interfaces.IAuthenticator)
-@zope.interface.provider(interfaces.IPluginFactory)
 class BluecatAuthenticator(dns_common.DNSAuthenticator):
     '''Base class for DNS Authenticators'''
 
