@@ -50,6 +50,7 @@ def test_certbot_bluecat():
             f' --bluecat-username \'{user}\''
             f' --bluecat-password \'{password}\''
             f' --bluecat-viewid \'{viewid}\''
+            ' --bluecat-verify-ssl False'
             ' --agree-tos'
             f' --email {email}'
             ' --no-eff-email'
