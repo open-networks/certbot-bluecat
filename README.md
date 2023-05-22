@@ -16,6 +16,7 @@ by installing the plugin you will also install all missing dependencies includin
 
 * verifies the domain via DNS01 challenge
 * adds the TXT record and triggers a quick deploy
+* supports the Legacy v1 API
 
 ## Usage
 
