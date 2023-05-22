@@ -28,7 +28,7 @@ class BluecatAuthenticator(dns_common.DNSAuthenticator):
     def add_parser_arguments(cls, add):
         # parameter from constants.py
         add('api', metavar='API', default=constants.CLI_DEFAULTS['bluecat_api'],
-            help='FQDN + Path to REST API')
+            help='FQDN of the Bluecat Address Manager')
         add('username', metavar='USERNAME', default=constants.CLI_DEFAULTS['bluecat_username'],
             help='Bluecat API Username')
         add('password', metavar='PASSWORD', default=constants.CLI_DEFAULTS['bluecat_password'],

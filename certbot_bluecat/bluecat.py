@@ -30,7 +30,7 @@ class Bluecat(object):
     def get_token(self):
         '''login and fetch a token'''
 
-        url = f'{self.api}login?username={self.username}&password={self.password}'
+        url = f'{self.api}/Services/REST/v1/login?username={self.username}&password={self.password}'
         res = requests.get(url, verify=self.verify_ssl)
         self.token = re.search('(BAMAuthToken: \S*)', res.text).group(0)
         return res.status_code
@@ -46,7 +46,7 @@ class Bluecat(object):
 
         zone = ''
         for d in reversed(domain_list):
-            url = (f'{self.api}getEntityByName?parentId={parentId}&name={d}&type=Zone')
+            url = (f'{self.api}/Services/REST/v1/getEntityByName?parentId={parentId}&name={d}&type=Zone')
             res = requests.get(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
             assert res.status_code < 300
             output = res.json()
@@ -69,7 +69,7 @@ class Bluecat(object):
         self.get_record_name_and_zone_id(validation_domain_name)
         self.delete_txt_record_by_name()
 
-        url = self.api + 'addEntity?parentId=' + self.zone_id
+        url = self.api + '/Services/REST/v1/addEntity?parentId=' + self.zone_id
         header = {'Authorization': self.token}
         header['Content-Type'] = 'application/json'
 
@@ -88,7 +88,7 @@ class Bluecat(object):
         '''run a quick deploy to push changes to dns server'''
 
         logger.info('deploying dns record')
-        url = f'{self.api}quickDeploy?entityId={self.zone_id}'
+        url = f'{self.api}/Services/REST/v1/quickDeploy?entityId={self.zone_id}'
         res = requests.post(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         if res.status_code != 200:
             message = f'The quick deployment failed with code:{res.status_code}. The Response content was {res.content}'
@@ -98,14 +98,14 @@ class Bluecat(object):
     def delete_txt_record(self):
         '''cleanup created txt record'''
 
-        url = f'{self.api}delete?objectId={self.objectId}'
+        url = f'{self.api}/Services/REST/v1/delete?objectId={self.objectId}'
         res = requests.delete(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         res.raise_for_status()
 
     def delete_txt_record_by_name(self):
         '''delete txt record if exists, to avoid duplicate entries'''
 
-        url = f'{self.api}getEntityByName?parentId={self.zone_id}&name={self.record_name}&type=TXTRecord'
+        url = f'{self.api}/Services/REST/v1/getEntityByName?parentId={self.zone_id}&name={self.record_name}&type=TXTRecord'
         res = requests.get(url, headers={'Authorization': self.token}, verify=self.verify_ssl)
         if res.json()['id'] > 0:
             self.objectId = str(res.json()['id'])
