@@ -1,0 +1,1 @@
+'''Certbot BlueCat DNS plugin.'''
