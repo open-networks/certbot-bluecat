@@ -3,8 +3,13 @@ import logging
 import re
 import requests
 
+from urllib3.exceptions import InsecureRequestWarning
+
 # Logging
 from certbot import errors
+
+# Suppress only the single warning from urllib3 needed.
+requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 logger.info(f'logger initialized: {__name__}')
@@ -79,7 +84,7 @@ class Bluecat(object):
             "properties": f"ttl=60|absoluteName={validation_domain_name}|txt={validation}|"
         }
 
-        res = requests.post(url, headers=header, data=body, verify=self.verify_ssl)
+        res = requests.post(url, headers=header, json=body, verify=self.verify_ssl)
 
         self.objectId = str(res.text)
         res.raise_for_status()
