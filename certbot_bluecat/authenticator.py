@@ -37,7 +37,7 @@ class BluecatAuthenticator(dns_common.DNSAuthenticator):
             help='entityId of the DNS View from Bluecat API')
         # delay after deploying txt record. this differs from the dns default variable propagation-seconds
         # as its continously trying to check if the deployment has been executed and asap returns
-        add('propagation-seconds', default=300, type=int,
+        add('propagation-seconds', default=60, type=int,
             help='Time waiting for DNS to propagate before asking the ACME server')
         add('verify-ssl', default=False, type=bool,
             help="enable or disable SSL verification of the API")
