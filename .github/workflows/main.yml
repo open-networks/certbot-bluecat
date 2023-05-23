@@ -55,7 +55,6 @@ jobs:
           jq . response.json
           echo "json=$(cat response.json)" >> $GITHUB_OUTPUT
           echo "id=$(cat response.json | jq -c '.id')" >> $GITHUB_OUTPUT
-          cat response.json
       
       - name: check pipeline
         id: check-pipeline
