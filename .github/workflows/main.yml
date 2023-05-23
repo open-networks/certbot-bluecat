@@ -34,14 +34,18 @@ jobs:
           # Fail if no token
           test -n "${TRIGGER_TOKEN}" || echo "::warning ::No secret token was set!"
           # Print webhook call
-          echo curl -vX POST \
+          echo curl -X POST \
+              --fail \
+              -o response.json \
               -F "token=${TRIGGER_TOKEN}" \
               -F "ref=${REF_NAME}" \
               -A "${USER_AGENT}" \
               ${variable_args} \
               ${URL}/api/v4/projects/${PROJECT_ID}/trigger/pipeline
           # Call webhook
-          curl -vX POST \
+          curl -X POST \
+              --fail \
+              -o response.json \
               -F "token=${TRIGGER_TOKEN}" \
               -F "ref=${REF_NAME}" \
               -A "${USER_AGENT}" \
@@ -85,11 +89,8 @@ jobs:
             
             # check status for success
             status=$(cat response.json | jq -cr '.status')
-            if [[ "$status" == "success" ]] ; then
+            if [[ "$status" == "success" || "$status" == "failed" ]] ; then
               break
-            elif [[ "$status" == "failed" ]] ; then
-              jq -c '.status'
-              exit 1
             fi
             sleep 60
           done
@@ -98,3 +99,7 @@ jobs:
           jq -c '.status'
           echo "json=$(cat response.json)" >> $GITHUB_OUTPUT
           echo "status=$(cat response.json | jq -c '.status')" >> $GITHUB_OUTPUT
+          
+          if [[ "$status" == "failed" ]] ; then
+            exit 1
+          fi
