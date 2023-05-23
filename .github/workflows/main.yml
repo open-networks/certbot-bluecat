@@ -79,7 +79,7 @@ jobs:
           sleep 30
           for i in {1..20} ; do
             # Call webhook
-            date && curl \
+            date && curl -s \
                 --fail \
                 -o response.json \
                 -H "PRIVATE-TOKEN: ${ACCESS_TOKEN}" \
