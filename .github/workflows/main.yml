@@ -45,7 +45,6 @@ jobs:
           # Call webhook
           curl -X POST \
               --fail \
-              -o response.json \
               -F "token=${TRIGGER_TOKEN}" \
               -F "ref=${REF_NAME}" \
               -A "${USER_AGENT}" \
