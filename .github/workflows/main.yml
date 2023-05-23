@@ -44,7 +44,6 @@ jobs:
               ${URL}/api/v4/projects/${PROJECT_ID}/trigger/pipeline
           # Call webhook
           curl -X POST \
-              --fail \
               -F "token=${TRIGGER_TOKEN}" \
               -F "ref=${REF_NAME}" \
               -A "${USER_AGENT}" \
