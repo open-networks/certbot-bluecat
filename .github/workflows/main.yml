@@ -71,7 +71,7 @@ jobs:
           # Fail if no token
           test -n "${ACCESS_TOKEN}" || echo "::warning ::No secret token was set!"
           # Print webhook call
-          echo curl \
+          echo curl -s \
               --fail \
               -o response.json \
               -H "PRIVATE-TOKEN: ${ACCESS_TOKEN}" \
@@ -92,6 +92,7 @@ jobs:
             if [[ "$status" == "success" ]] ; then
               break
             elif [[ "$status" == "failed" ]] ; then
+              jq -c '.status'
               exit 1
             fi
             sleep 60
